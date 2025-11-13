@@ -48,6 +48,27 @@ getAssignedByMe: async (filters = {}) => {
     return response.data;
   },
 
+
+  // ✅ NEW - Hold task
+  holdTask: async (taskId, reason = null) => {
+    try {
+      const response = await api.post(`/tasks/${taskId}/hold`, { reason });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // ✅ NEW - Resume task
+  resumeTask: async (taskId) => {
+    try {
+      const response = await api.post(`/tasks/${taskId}/resume`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
   // Add task update/progress
   addTaskUpdate: async (taskId, updateData) => {
     const response = await api.post(`/tasks/${taskId}/updates`, updateData);

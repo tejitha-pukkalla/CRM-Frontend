@@ -13,6 +13,7 @@ import TaskSubtasks from './components/TaskSubtasks';
 import TaskTimeline from './components/TaskTimeline';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import ReassignModal from './components/ReassignModal';
+import HoldTaskModal from './components/HoldTaskModal'; // ✅ NEW
 import Spinner from '../../components/common/LoadingSpinner';
 import Button from '../../components/common/Button';
 import Avatar from '../../components/common/Avatar';
@@ -27,6 +28,8 @@ const TaskDetails = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showReassignModal, setShowReassignModal] = useState(false);
+  const [showHoldModal, setShowHoldModal] = useState(false); // ✅ NEW
+  const [resumeLoading, setResumeLoading] = useState(false); // ✅ NEW
 
   useEffect(() => {
     fetchTaskDetails();
@@ -44,19 +47,36 @@ const TaskDetails = () => {
     }
   };
 
+  // ✅ NEW - Handle Resume Task
+  const handleResumeTask = async () => {
+    try {
+      setResumeLoading(true);
+      await taskService.resumeTask(id);
+      fetchTaskDetails();
+    } catch (error) {
+      alert(error.message || 'Failed to resume task');
+    } finally {
+      setResumeLoading(false);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner size="lg" />
-      </div>
+      <DashboardLayout>
+        <div className="flex justify-center items-center h-screen">
+          <Spinner size="lg" />
+        </div>
+      </DashboardLayout>
     );
   }
 
   if (!taskData) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-gray-500">Task not found</p>
-      </div>
+      <DashboardLayout>
+        <div className="p-6 text-center">
+          <p className="text-gray-500">Task not found</p>
+        </div>
+      </DashboardLayout>
     );
   }
 
@@ -85,6 +105,13 @@ const TaskDetails = () => {
               <TaskStatusBadge status={task.status} />
               <TaskApprovalStatus approvalStatus={task.approvalStatus} />
               <TaskPriorityBadge priority={task.priority} />
+              
+              {/* ✅ NEW - Show Hold Info */}
+              {task.isOnHold && task.holdReason && (
+                <span className="px-3 py-1 bg-orange-50 border border-orange-200 rounded-full text-xs text-orange-700">
+                  <strong>Reason:</strong> {task.holdReason}
+                </span>
+              )}
             </div>
           </div>
 
@@ -137,6 +164,12 @@ const TaskDetails = () => {
             <p className="font-medium text-gray-800">
               {Math.round(totalTimeSpent / 60)}h / {task.estimatedTime}h
             </p>
+            {/* ✅ NEW - Show Hold Time */}
+            {task.totalHoldTime > 0 && (
+              <p className="text-xs text-orange-600">
+                ({Math.round(task.totalHoldTime / 60)}h on hold)
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -145,18 +178,48 @@ const TaskDetails = () => {
       {isAssignedToMe && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex justify-between items-center">
-            <TaskTimer taskId={task._id} />
+            <TaskTimer 
+              taskId={task._id} 
+              taskStatus={task.status}
+              onTimerChange={fetchTaskDetails}
+            />
             <div className="flex gap-3">
-              <StartWorkButton
-                task={task}
-                onStart={fetchTaskDetails}
-              />
-              {task.status === 'in-progress' && (
+              {/* ✅ Show Start button only if not started */}
+              {task.status === 'not-started' && (
+                <StartWorkButton
+                  task={task}
+                  onStart={fetchTaskDetails}
+                />
+              )}
+
+              {/* ✅ NEW - Show Hold button when in progress */}
+              {task.status === 'in-progress' && !task.isOnHold && (
+                <Button
+                  onClick={() => setShowHoldModal(true)}
+                  className="bg-orange-500 hover:bg-orange-600"
+                >
+                  ⏸️ Hold Task
+                </Button>
+              )}
+
+              {/* ✅ NEW - Show Resume button when on hold */}
+              {task.status === 'on-hold' && task.isOnHold && (
+                <Button
+                  onClick={handleResumeTask}
+                  disabled={resumeLoading}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {resumeLoading ? 'Resuming...' : '▶️ Resume Task'}
+                </Button>
+              )}
+
+              {/* Show Complete button only when in progress and not on hold */}
+              {task.status === 'in-progress' && !task.isOnHold && (
                 <Button
                   onClick={() => setShowCompleteModal(true)}
                   className="bg-green-600 hover:bg-green-700"
                 >
-                  Mark Complete
+                  ✓ Mark Complete
                 </Button>
               )}
             </div>
@@ -270,6 +333,18 @@ const TaskDetails = () => {
           onClose={() => setShowReassignModal(false)}
           onReassign={() => {
             setShowReassignModal(false);
+            fetchTaskDetails();
+          }}
+        />
+      )}
+
+      {/* ✅ NEW - Hold Modal */}
+      {showHoldModal && (
+        <HoldTaskModal
+          taskId={task._id}
+          onClose={() => setShowHoldModal(false)}
+          onHold={() => {
+            setShowHoldModal(false);
             fetchTaskDetails();
           }}
         />

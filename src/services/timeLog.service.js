@@ -21,6 +21,26 @@ const timeLogService = {
     }
   },
 
+  // ✅ NEW - Pause timer
+  pauseTimer: async (taskId, reason = null) => {
+    try {
+      const response = await api.post(`/time/${taskId}/pause`, { reason });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // ✅ NEW - Resume timer
+  resumeTimer: async (taskId) => {
+    try {
+      const response = await api.post(`/time/${taskId}/resume`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
   // Add manual time entry - FIXED ROUTE
   addManualTime: async (taskId, timeData) => {
     try {
