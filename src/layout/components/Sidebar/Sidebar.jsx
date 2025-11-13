@@ -263,13 +263,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       >
         <div className="flex flex-col h-full">
           {/* Logo Section */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 flex-shrink-0 min-h-[81px]">
+          <div className="flex items-center justify-between px-1 py-3.5 border-b border-gray-200 flex-shrink-0 min-h-[81px]w">
             {!isExpanded && (
               <div className="w-full flex items-center justify-center">
                 <img
                   src="/logo.png"
                   alt="Logo Icon"
-                  className="w-12 h-12 rounded-md object-cover"
+                  className="w-14 h-14 object-contain rounded-md"
                 />
               </div>
             )}
@@ -439,8 +439,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           {/* User Info */}
           <div className="px-6 py-4 border-t border-gray-200 bg-white">
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                {user?.name?.charAt(0).toUpperCase()}
+              <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0 overflow-hidden">
+                {user?.profilePic ? (
+                  <img 
+                    src={user.profilePic} 
+                    alt={user?.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>{user?.name?.charAt(0).toUpperCase()}</span>
+                )}
               </div>
               <AnimatePresence>
                 {isExpanded && (
