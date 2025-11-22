@@ -1,4 +1,4 @@
- import { useState } from "react";
+import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from '../../../hooks/useAuth';
@@ -51,27 +51,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </svg>
         ),
       },
-     {
-        name: "Support Tickets",
-        path: "/tickets",
-        icon: (
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
-            />
-          </svg>
-        ),
-      },
- 
     ];
+
+    // Support Tickets item to add at the end
+    const supportTicketsItem = {
+      name: "Support Tickets",
+      path: "/tickets",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
+          />
+        </svg>
+      ),
+    };
  
     const roleSpecificItems = {
       [ROLES.SUPERADMIN]: [
@@ -85,33 +86,33 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           )
         },
         {
-        name: "Work",
-        icon: (
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 17v2h6v-2M8 9h8v4H8zM4 7a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7z"
-            />
-          </svg>
-        ),
-        children: [
-          {
-            name: "Projects",
-            path: "/projects",
-          },
-          {
-            name: "Tasks",
-            path: "/tasks",
-          },
-        ],
-      },
+          name: "Work",
+          icon: (
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 17v2h6v-2M8 9h8v4H8zM4 7a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7z"
+              />
+            </svg>
+          ),
+          children: [
+            {
+              name: "Projects",
+              path: "/projects",
+            },
+            {
+              name: "Tasks",
+              path: "/tasks",
+            },
+          ],
+        },
         {
           name: 'Approvals',
           path: '/approvals',
@@ -120,7 +121,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           )
-        }
+        },
+        supportTicketsItem, 
       ],
       [ROLES.TEAMLEAD]: [
         {
@@ -133,34 +135,34 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           )
         },
         {
-        name: "Work",
-        icon: (
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 17v2h6v-2M8 9h8v4H8zM4 7a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7z"
-            />
-          </svg>
-        ),
-        children: [
-          {
-            name: "Projects",
-            path: "/projects",
-          },
-          {
-            name: "Tasks",
-            path: "/tasks",
-          },
-        ],
-      },
-      {
+          name: "Work",
+          icon: (
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 17v2h6v-2M8 9h8v4H8zM4 7a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7z"
+              />
+            </svg>
+          ),
+          children: [
+            {
+              name: "Projects",
+              path: "/projects",
+            },
+            {
+              name: "Tasks",
+              path: "/tasks",
+            },
+          ],
+        },
+        {
           name: 'My Tasks',
           path: '/my-tasks',
           icon: (
@@ -186,7 +188,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           )
-        }
+        },
+        supportTicketsItem,
       ],
       [ROLES.PROJECTLEAD]: [
         {
@@ -224,7 +227,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           )
-        }
+        },
+        supportTicketsItem, 
       ],
       [ROLES.MEMBER]: [
         {
@@ -244,7 +248,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           )
-        }
+        },
+        supportTicketsItem, 
       ]
     };
  

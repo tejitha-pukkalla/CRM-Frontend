@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import DashboardLayout from "../../layout/DashboardLayout";
 import ticketService from "../../services/ticket.service";
+import { useAuth } from "../../hooks/useAuth"; 
 
 const priorityColors = {
   Low: "bg-green-100 text-green-700 border-green-200",
@@ -37,6 +38,7 @@ const statusColors = {
 const categoryIcons = { General: "📋", Bug: "🐛", Feature: "✨", Support: "🤝" };
 
 export default function TicketDetailPage({ ticketId, onBack }) {
+  const { user } = useAuth(); 
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,6 +54,9 @@ export default function TicketDetailPage({ ticketId, onBack }) {
     assignedTo: "",
     internalNotes: "",
   });
+
+  
+  const canEditTicket = user?.globalRole === "superadmin" || user?.globalRole === "teamlead";
 
   useEffect(() => {
     if (ticketId) fetchTicketDetails();
@@ -86,10 +91,8 @@ export default function TicketDetailPage({ ticketId, onBack }) {
       const response = await ticketService.updateTicketStatus(ticketId, editData);
       const updatedTicket = response?.data || response;
       
-      // ✅ Update the ticket state with new data
       setTicket(updatedTicket);
       
-      // ✅ Update editData to reflect saved changes
       setEditData({
         status: updatedTicket?.status || "",
         adminRemarks: updatedTicket?.adminRemarks || "",
@@ -196,17 +199,18 @@ export default function TicketDetailPage({ ticketId, onBack }) {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-4">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <button onClick={onBack} className="p-2 hover:bg-white rounded-lg transition-colors"><ArrowLeft size={20} /></button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">Ticket Details</h1>
-                <p className="text-gray-500 text-sm">Review and manage support request</p>
+                <h1 className="text-xl font-bold text-gray-800">Ticket Details</h1>
+                <p className="text-gray-500 text-xs">Review and manage support request</p>
               </div>
             </div>
-            {!isEditing && (
-              <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-                <Edit3 size={16} /> Edit Ticket
+            {/* ✅ Only show Edit button if user has permission */}
+            {!isEditing && canEditTicket && (
+              <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-xs font-medium">
+                <Edit3 size={14} /> Edit Ticket
               </button>
             )}
           </motion.div>
@@ -277,8 +281,8 @@ export default function TicketDetailPage({ ticketId, onBack }) {
                 </motion.div>
               )}
 
-              {/* Edit Form */}
-              {isEditing && (
+              {/* ✅ Edit Form - Only show if user has permission */}
+              {isEditing && canEditTicket && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl shadow-md border border-indigo-200 p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-bold text-gray-800 flex items-center gap-2"><Edit3 size={18} className="text-indigo-600" /> Edit Ticket</h3>
@@ -375,8 +379,8 @@ export default function TicketDetailPage({ ticketId, onBack }) {
                 </motion.div>
               )}
 
-              {/* Quick Actions */}
-              {canTakeAction && !isEditing && (
+              {/* ✅ Quick Actions - Only for SuperAdmin/TeamLead */}
+              {canTakeAction && !isEditing && canEditTicket && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="bg-white rounded-xl shadow-md border border-gray-100 p-4">
                   <h3 className="text-sm font-bold text-gray-800 mb-3">Quick Actions</h3>
                   <div className="space-y-2">
@@ -409,12 +413,3 @@ export default function TicketDetailPage({ ticketId, onBack }) {
     </DashboardLayout>
   );
 }
-
-
-
-
-
-
-
-
-

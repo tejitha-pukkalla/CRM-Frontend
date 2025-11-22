@@ -38,10 +38,10 @@ export default function TicketManagement() {
 
       let data;
       if (user?.globalRole === "superadmin") {
-        console.log("🔍 Fetching ALL tickets for SuperAdmin");
+        console.log("🔓 Fetching ALL tickets for SuperAdmin");
         data = await ticketService.getAllTickets();
       } else {
-        console.log("🔍 Fetching MY tickets");
+        console.log("🔒 Fetching MY tickets");
         data = await ticketService.getMyTickets();
       }
 
@@ -108,28 +108,30 @@ export default function TicketManagement() {
     <DashboardLayout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
+          {/* Header - Fixed Font Size */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4"
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
           >
             <div>
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">🎫 Support Tickets</h1>
-              <p className="text-gray-600">
+              <h1 className="text-2xl font-bold text-gray-800 mb-1 flex items-center gap-2">
+                🎫 Support Tickets
+              </h1>
+              <p className="text-sm text-gray-600">
                 {isSuperAdmin
                   ? "Manage and track all support requests from all users"
-                  : "View and create your support requests"}
+                  : "View and track your support requests"}
               </p>
             </div>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-200 font-medium"
+              className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-200 font-medium text-sm"
             >
-              <Plus size={20} /> Create Request
+              <Plus size={18} /> Create Request
             </motion.button>
           </motion.div>
 
@@ -138,7 +140,7 @@ export default function TicketManagement() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl"
+              className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"
             >
               {error}
             </motion.div>
@@ -147,7 +149,7 @@ export default function TicketManagement() {
           {/* Stats */}
           <TicketStats tickets={tickets} />
 
-          {/* Ticket Table - Simplified props */}
+          {/* Ticket Table */}
           <TicketTable
             tickets={tickets}
             formatDate={formatDate}
