@@ -61,6 +61,11 @@ import AttendanceReport from './pages/Attendance/AttendanceReport';
 // 🎫 NEW: Ticket Pages
 import TicketManagement from './pages/Tickets/TicketManagement';
 
+
+// Leave Pages
+import LeaveManagement from './pages/Leaves/LeaveManagement';
+import MyLeaves from './pages/Leaves/MyLeaves';
+
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
 
@@ -376,6 +381,41 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Leave Management - SuperAdmin & TeamLead */}
+<Route
+  path="/leaves/manage"
+  element={
+    <ProtectedRoute>
+      <RoleBasedRoute allowedRoles={[ROLES.SUPERADMIN, ROLES.TEAMLEAD]}>
+        <LeaveManagement />
+      </RoleBasedRoute>
+    </ProtectedRoute>
+  }
+/>
+
+{/* Leave Applications - SuperAdmin & TeamLead */}
+<Route
+  path="/leaves/applications"
+  element={
+    <ProtectedRoute>
+      <RoleBasedRoute allowedRoles={[ROLES.SUPERADMIN, ROLES.TEAMLEAD]}>
+        <LeaveManagement />
+      </RoleBasedRoute>
+    </ProtectedRoute>
+  }
+/>
+
+{/* My Leaves - All Users */}
+<Route
+  path="/leaves/my-leaves"
+  element={
+    <ProtectedRoute>
+      <MyLeaves />
+    </ProtectedRoute>
+  }
+/>
+
 
       {/* Notification Routes */}
       <Route
